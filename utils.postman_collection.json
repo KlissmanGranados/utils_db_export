@@ -1,0 +1,135 @@
+{
+	"info": {
+		"_postman_id": "aed28f1a-e08d-47cc-b23a-39f3c519ee8c",
+		"name": "utils",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12705560"
+	},
+	"item": [
+		{
+			"name": "query export",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const format = \"xlsx\";\r",
+							"const uri = \"mongodb://user:pass@host:port/database\";\r",
+							"const query = `\r",
+							"\r",
+							"db.bookings.aggregate([\r",
+							"    {\r",
+							"        $match: {\r",
+							"            createdDate: {\r",
+							"                $gte: ISODate(\"2023-08-01T00:00:00.000Z\"),\r",
+							"                $lt: ISODate(\"2023-08-11T00:00:00.000Z\")\r",
+							"            },\r",
+							"            target: { $ne: null },\r",
+							"            origin: null\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        $addFields: {\r",
+							"            targetId: {\r",
+							"                $cond: [\r",
+							"                    { $eq: [{ $strLenCP: \"$target\" }, 24] },\r",
+							"                    { $toObjectId: \"$target\" },\r",
+							"                    null\r",
+							"                ]\r",
+							"            }\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        $match: {\r",
+							"            targetId: { $ne: null }\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        $lookup: {\r",
+							"            from: \"pharmacies\",\r",
+							"            localField: \"targetId\",\r",
+							"            foreignField: \"_id\",\r",
+							"            as: \"pharmacy\"\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        $unwind: \"$pharmacy\"\r",
+							"    },\r",
+							"    {\r",
+							"        $group: {\r",
+							"            _id: \"$pharmacy.contact.city\",\r",
+							"            volumen: { $sum: 1 }\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        $sort: { volumen: -1 }\r",
+							"    },\r",
+							"    {\r",
+							"        $project: {\r",
+							"            _id: 0,\r",
+							"            city: \"$_id\",\r",
+							"            volumen: 1\r",
+							"        }\r",
+							"    }\r",
+							"])\r",
+							"\r",
+							"`;\r",
+							"\r",
+							"const toBase64 = text =>  Buffer.from(text).toString('base64');\r",
+							"\r",
+							"pm.variables.set(\"uri\",uri);\r",
+							"pm.variables.set(\"query\", toBase64( query ) );\r",
+							"pm.variables.set(\"format\", format);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"uri\":\"{{uri}}\",\r\n    \"query\":\"{{query}}\",\r\n    \"format\":\"{{format}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/export",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"export"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
