@@ -8,6 +8,7 @@ ENV LC_ALL es_ES.UTF-8
 
 WORKDIR /home/kg/app
 COPY ./ .
+RUN chmod +x ./entrypoint.sh
 RUN if [ "$(ls -A ./keys/)" ]; then chmod -R 600 ./keys/; fi
 RUN wget https://storage.googleapis.com/staging.portfolio-50b24.appspot.com/mongodb-mongosh_1.10.4_amd64.deb
 RUN dpkg -i mongodb-mongosh_1.10.4_amd64.deb
