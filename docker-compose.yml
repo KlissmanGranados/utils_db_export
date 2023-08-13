@@ -8,3 +8,14 @@ services:
       - "8080:8080"
     env_file:
       - config.env
+
+  mysql:
+    image: mysql
+    container_name: db-export-utils-mysql
+    env_file:
+      - config.env
+    volumes:
+      - data-export-mysql:/var/lib/mysql
+
+volumes:
+  data-export-mysql:
