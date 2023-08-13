@@ -13,8 +13,8 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"const format = \"xlsx\";\r",
-							"const uri = \"mongodb://user:pass@host:port/database\";\r",
+							"const format = \"csv\";\r",
+							"const uri = \"mongodb://user:password@localhost:port/database\";\r",
 							"const query = `\r",
 							"\r",
 							"db.bookings.aggregate([\r",

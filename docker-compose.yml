@@ -2,9 +2,9 @@ version: "3"
 services:
 
   utils:
+    container_name: db-export-utils
     build: .
     ports:
       - "8080:8080"
-
-volumes:
-  utils-volumen:
+    env_file:
+      - config.env
